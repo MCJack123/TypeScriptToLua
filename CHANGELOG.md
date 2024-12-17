@@ -1,5 +1,47 @@
 # Changelog
 
+## 1.28.0
+
+- Upgraded TypeScript to 5.7.2
+- Support `String(x)` transforming it to `tostring(x)`.
+- Fixed statements before class super call
+- Fixed some bugs with `LuaMultiReturn` used in iterables
+
+## 1.27.0
+
+- Upgraded TypeScript to 5.6.2
+- Added support for `Math.trunc` (see [Math.trunc()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/trunc))
+- Fixed a runtime error when disposing a disposable class
+- Fixed the wrong `this` value being passed when using `?.` to call a `super` method
+- Fixed a bug causing exported `/** @compileMembersOnly */` enums to break
+- Fixed a bug in `Array.from` when calling it with a non-array iterable
+- Fixed an incorrect diagnostic being shown for `await using` code
+- Fixed a bug causing not all getters/setters to be transpiled
+
+## 1.26.0
+
+- Upgraded TypeScript to 5.5.2
+- Added support for the new proposed ECMAScript Set methods in ESNext: `intersection`, `union`, `difference`, `symmetricDifference`, `isSubsetOf`, `isSupersetOf`, `isDisjointFrom`. For more info see [the TypeScript release notes](https://devblogs.microsoft.com/typescript/announcing-typescript-5-5/#support-for-new-ecmascript-set-methods).
+- Fixed a bug causing bundled code to be executed twice in some edge cases.
+- Fixed a bug causing errors when using lualib in an environment without coroutines.
+
+## 1.25.0
+
+- Upgraded TypeScript to 5.4.2
+- Added support for new TypeScript 5.4 features `Map.groupBy` and `Object.groupBy`
+- Fixed a bug causing files to not be emitted at the correct output path
+- Fixed a bug causing `@customname` to not work together with `@noSelf`
+- Fixed a bug causing extended tsconfigs to not be correctly read when using watch mode
+
+## 1.24.0
+
+- Optimized promises and async/await to better handle long chains of promises, like for example using await in a loop
+- Fixed a bug causing errors when accessing `super` properties
+
+## 1.23.0
+
+- Upgraded TypeScript to 5.3.3
+
 ## 1.22.0
 
 - Added support for `Number.isInteger(n)`

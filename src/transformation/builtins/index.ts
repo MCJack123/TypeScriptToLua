@@ -14,10 +14,11 @@ import { transformMathCall, transformMathProperty } from "./math";
 import { transformNumberConstructorCall, transformNumberPrototypeCall, transformNumberProperty } from "./number";
 import { transformObjectConstructorCall, tryTransformObjectPrototypeCall } from "./object";
 import { transformPromiseConstructorCall } from "./promise";
-import { transformStringConstructorCall, transformStringProperty, transformStringPrototypeCall } from "./string";
+import { transformStringConstructorMethodCall, transformStringProperty, transformStringPrototypeCall } from "./string";
 import { transformSymbolConstructorCall } from "./symbol";
 import { unsupportedBuiltinOptionalCall } from "../utils/diagnostics";
 import { LuaTarget } from "../../CompilerOptions";
+import { transformMapConstructorCall } from "./map";
 
 export function transformBuiltinPropertyAccessExpression(
     context: TransformationContext,
@@ -93,11 +94,14 @@ function tryTransformBuiltinGlobalMethodCall(
         case "Console":
             result = transformConsoleCall(context, node, calledMethod);
             break;
+        case "MapConstructor":
+            result = transformMapConstructorCall(context, node, calledMethod);
+            break;
         case "Math":
             result = transformMathCall(context, node, calledMethod);
             break;
         case "StringConstructor":
-            result = transformStringConstructorCall(context, node, calledMethod);
+            result = transformStringConstructorMethodCall(context, node, calledMethod);
             break;
         case "ObjectConstructor":
             result = transformObjectConstructorCall(context, node, calledMethod);

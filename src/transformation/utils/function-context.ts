@@ -83,7 +83,12 @@ function findRootDeclarations(context: TransformationContext, callExpression: ts
         ? callExpression.tagName
         : ts.isJsxOpeningElement(callExpression)
         ? callExpression.tagName
-        : callExpression.expression;
+        : ts.isCallExpression(callExpression)
+        ? callExpression.expression
+        : undefined;
+
+    if (!calledExpression) return [];
+
     const calledSymbol = context.checker.getSymbolAtLocation(calledExpression);
     if (calledSymbol === undefined) return [];
 
@@ -132,6 +137,10 @@ function computeDeclarationContextType(context: TransformationContext, signature
             return ContextType.Void;
         }
 
+        return ContextType.NonVoid;
+    }
+
+    if (signatureDeclaration.parent && ts.isTypeParameterDeclaration(signatureDeclaration.parent)) {
         return ContextType.NonVoid;
     }
 
