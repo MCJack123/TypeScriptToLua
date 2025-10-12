@@ -157,7 +157,7 @@ export class LuaPrinter {
     };
     private static rightAssociativeOperators = new Set([lua.SyntaxKind.ConcatOperator, lua.SyntaxKind.PowerOperator]);
 
-    private currentIndent = "";
+    protected currentIndent = "";
     protected luaFile: string;
     protected relativeSourcePath: string;
     protected options: CompilerOptions;
@@ -397,6 +397,8 @@ export class LuaPrinter {
                 return this.printReturnStatement(statement as lua.ReturnStatement);
             case lua.SyntaxKind.BreakStatement:
                 return this.printBreakStatement(statement as lua.BreakStatement);
+            case lua.SyntaxKind.ContinueStatement:
+                return this.printContinueStatement(statement as lua.ContinueStatement);
             case lua.SyntaxKind.ExpressionStatement:
                 return this.printExpressionStatement(statement as lua.ExpressionStatement);
             default:
@@ -575,6 +577,10 @@ export class LuaPrinter {
         return this.createSourceNode(statement, this.indent("break"));
     }
 
+    public printContinueStatement(statement: lua.ContinueStatement): SourceNode {
+        return this.createSourceNode(statement, this.indent("continue"));
+    }
+
     public printExpressionStatement(statement: lua.ExpressionStatement): SourceNode {
         return this.createSourceNode(statement, [this.indent(), this.printExpression(statement.expression)]);
     }
@@ -615,6 +621,8 @@ export class LuaPrinter {
                 return this.printTableIndexExpression(expression as lua.TableIndexExpression);
             case lua.SyntaxKind.ParenthesizedExpression:
                 return this.printParenthesizedExpression(expression as lua.ParenthesizedExpression);
+            case lua.SyntaxKind.ConditionalExpression:
+                return this.printConditionalExpression(expression as lua.ConditionalExpression);
             default:
                 throw new Error(`Tried to print unknown statement kind: ${lua.SyntaxKind[expression.kind]}`);
         }
@@ -827,6 +835,17 @@ export class LuaPrinter {
 
     public printParenthesizedExpression(expression: lua.ParenthesizedExpression) {
         return this.createSourceNode(expression, ["(", this.printExpression(expression.expression), ")"]);
+    }
+
+    public printConditionalExpression(expression: lua.ConditionalExpression): SourceNode {
+        return this.createSourceNode(expression, [
+            "if ",
+            this.printExpression(expression.condition),
+            " then ",
+            this.printExpression(expression.whenTrue),
+            " else ",
+            this.printExpression(expression.whenFalse),
+        ]);
     }
 
     public printOperator(kind: lua.Operator): SourceNode {

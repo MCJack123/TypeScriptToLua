@@ -5,8 +5,8 @@ import {
     createDefaultExportExpression,
     createExportedIdentifier,
     hasDefaultExportModifier,
-    hasExportModifier,
     isSymbolExported,
+    shouldBeExported,
 } from "../../utils/export";
 import { createSelfIdentifier } from "../../utils/lua-ast";
 import { createSafeName, isUnsafeName } from "../../utils/safe-names";
@@ -202,7 +202,7 @@ function transformClassLikeDeclaration(
                 const iif = lua.createFunctionExpression(lua.createBlock(bodyStatements), [
                     lua.createIdentifier("self"),
                 ]);
-                const iife = lua.createCallExpression(iif, [className]);
+                const iife = lua.createCallExpression(iif, [localClassName]);
                 result.push(lua.createExpressionStatement(iife, member));
             }
         }
@@ -214,10 +214,10 @@ function transformClassLikeDeclaration(
         const decoratingStatement = lua.createAssignmentStatement(localClassName, decoratingExpression);
         result.push(decoratingStatement);
 
-        if (hasExportModifier(classDeclaration)) {
+        if (shouldBeExported(classDeclaration)) {
             const exportExpression = hasDefaultExportModifier(classDeclaration)
                 ? createDefaultExportExpression(classDeclaration)
-                : createExportedIdentifier(context, className);
+                : createExportedIdentifier(context, localClassName);
 
             const classAssignment = lua.createAssignmentStatement(exportExpression, localClassName);
             result.push(classAssignment);

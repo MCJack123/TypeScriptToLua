@@ -252,6 +252,7 @@ describe("tsconfig", () => {
             ["luaTarget", "jit", { luaTarget: tstl.LuaTarget.LuaJIT }],
             ["luaTarget", "cc",  { luaTarget: tstl.LuaTarget.Cobalt }],
             ["luaTarget", "cc-5.2",  { luaTarget: tstl.LuaTarget.Cobalt52 }],
+            ["luaTarget", "luau", { luaTarget: tstl.LuaTarget.Luau }],
 
             ["luaBundle", "foo", { luaBundle: "foo" }],
             ["luaBundleEntry", "bar", { luaBundleEntry: "bar" }],

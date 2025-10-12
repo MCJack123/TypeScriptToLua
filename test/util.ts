@@ -63,7 +63,7 @@ export function testEachVersion<T extends TestBuilder>(
 ): void {
     for (const version of Object.values(tstl.LuaTarget) as tstl.LuaTarget[]) {
         const specialBuilder = special?.[version];
-        if (specialBuilder === false) return;
+        if (specialBuilder === false) continue;
 
         const testName = name === undefined ? version : `${name} [${version}]`;
         defineTest(testName, () => {
@@ -89,6 +89,7 @@ export function expectEachVersionExceptJit<T>(
         [tstl.LuaTarget.LuaJIT]: false, // Exclude JIT
         [tstl.LuaTarget.Cobalt]: false, // Exclude CC
         [tstl.LuaTarget.Cobalt52]: false, // Exclude CC
+        [tstl.LuaTarget.Luau]: false,
     };
 }
 

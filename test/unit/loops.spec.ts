@@ -540,10 +540,13 @@ for (const testCase of [
     "for (const a of []) { continue; }",
 ]) {
     const expectContinueVariable: util.TapCallback = builder =>
-        expect(builder.getMainLuaCodeChunk()).toMatch("local __continue2");
+        expect(builder.getMainLuaCodeChunk()).toMatch(/local __continue\d+/);
 
     const expectContinueGotoLabel: util.TapCallback = builder =>
-        expect(builder.getMainLuaCodeChunk()).toMatch("::__continue2::");
+        expect(builder.getMainLuaCodeChunk()).toMatch(/::__continue\d+::/);
+
+    const expectContinueStatement: util.TapCallback = builder =>
+        expect(builder.getMainLuaCodeChunk()).toMatch("continue;");
 
     util.testEachVersion(`loop continue (${testCase})`, () => util.testModule(testCase), {
         [tstl.LuaTarget.Universal]: expectContinueVariable,
@@ -553,8 +556,23 @@ for (const testCase of [
         [tstl.LuaTarget.Lua53]: expectContinueGotoLabel,
         [tstl.LuaTarget.Lua54]: expectContinueGotoLabel,
         [tstl.LuaTarget.LuaJIT]: expectContinueGotoLabel,
+        [tstl.LuaTarget.Luau]: () => expectContinueStatement,
     });
 }
+
+// https://github.com/TypeScriptToLua/TypeScriptToLua/issues/1638
+test.each([tstl.LuaTarget.Universal, tstl.LuaTarget.Lua50, tstl.LuaTarget.Lua51])(
+    "no unreachable code when  using continue for target %s (#1638)",
+    target => {
+        util.testFunction`
+            let i = 0;
+            while(++i < 10) continue;
+            return i;
+        `
+            .setOptions({ luaTarget: target })
+            .expectToMatchJsResult();
+    }
+);
 
 test("do...while", () => {
     util.testFunction`
@@ -619,4 +637,13 @@ test("for...in with pre-defined variable keeps last value", () => {
     `.getLuaExecutionResult();
     // Need custom matcher because order is not guaranteed in neither JS nor Lua
     expect([keyX, keyFoo]).toContain(result);
+});
+
+// https://github.com/TypeScriptToLua/TypeScriptToLua/issues/1631
+test("loop variables should not be global (#1631)", () => {
+    const code = util.testModule`
+        for (let val = 0; val < 2; ++val) {}
+    `.getMainLuaCodeChunk();
+
+    expect(code).toContain("local val");
 });
